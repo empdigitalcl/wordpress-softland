@@ -19,12 +19,12 @@ services:
  mysql:
   image: mysql:latest
   command: --default-authentication-plugin=mysql_native_password
-  container_name: dentalmysql
+  container_name: wpsoftlandmysql
   ports:
    - 33073:3306
   environment:
    MYSQL_ROOT_PASSWORD: 123
-   MYSQL_DATABASE: nb2_dev_dental
+   MYSQL_DATABASE: nb2_dev_wpsoftland
    MYSQL_USER: newbits_dev
    MYSQL_PASSWORD: PDUmwMjLjzGPpj6J
   networks:
