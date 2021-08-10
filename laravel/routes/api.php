@@ -20,5 +20,6 @@ Route::get('sync/wc/product/{sku}', 'SyncController@syncWCProductsBySku');
 Route::get('sync/stock', 'SyncController@syncStock');
 Route::get('sync/orders', 'SyncController@getOrders');
 Route::get('sync/config', 'SyncController@config');
+Route::get('softland', 'SoftlandController@index');
 Route::group(['middleware' => 'auth'], function(){
 });
