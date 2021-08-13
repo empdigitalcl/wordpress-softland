@@ -6,6 +6,14 @@
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
+# Copyright 2017 Google Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,23 +41,15 @@ RUN /bin/bash /build-scripts/install_php.sh && \
       cd /build-scripts && \
       su www-data -c "php /usr/local/bin/composer require composer/semver"
 
-# Instala bcmath, para utilización de Telescope.
-RUN echo "deb http://cz.archive.ubuntu.com/ubuntu cosmic main universe" >> /etc/apt/sources.list
 RUN apt-get update && \
     apt-get install --no-install-recommends --no-install-suggests --yes make && \
     apt-get install --no-install-recommends --no-install-suggests --yes vim && \
     apt-get install --no-install-recommends --no-install-suggests --yes nano && \
     apt-get install --no-install-recommends --no-install-suggests --yes iproute2
 
-RUN apt-get install --no-install-recommends --no-install-suggests --yes php7.2-bcmath
-RUN apt-get install --no-install-recommends --no-install-suggests --yes php7.2-dev
-RUN apt-get install --no-install-recommends --no-install-suggests --yes php7.2-xdebug
 
-RUN cp /usr/share/php7.2-bcmath/bcmath/bcmath.ini /opt/php72/lib/ext.available/ext-bcmath.ini && \
-	ln -s /opt/php72/lib/ext.available/ext-bcmath.ini /opt/php72/lib/ext.enabled/
-
-RUN cp /etc/php/7.2/mods-available/xdebug.ini /opt/php72/lib/ext.available/ext-xdebug.ini && \
-  ln -s /opt/php72/lib/ext.available/ext-xdebug.ini /opt/php72/lib/ext.enabled/
+#RUN cp /etc/php/7.2/mods-available/xdebug.ini /opt/php72/lib/ext.available/ext-xdebug.ini && \
+#  ln -s /opt/php72/lib/ext.available/ext-xdebug.ini /opt/php72/lib/ext.enabled/
 
 RUN echo "xdebug.remote_enable=on" >> /opt/php72/lib/ext.available/ext-xdebug.ini \
   && echo "xdebug.remote_autostart=on" >> /opt/php72/lib/ext.available/ext-xdebug.ini \
@@ -61,24 +61,40 @@ RUN echo "xdebug.remote_enable=on" >> /opt/php72/lib/ext.available/ext-xdebug.in
   && echo 'xdebug.remote_mode=req' >> /opt/php72/lib/ext.available/ext-xdebug.ini \
   && echo 'xdebug.remote_log="/tmp/xdebug.log"' >> /opt/php72/lib/ext.available/ext-xdebug.ini
 
-RUN ln -s /usr/lib/php/20170718/xdebug.so /opt/php72/lib/x86_64-linux-gnu/extensions/no-debug-non-zts-20170718/xdebug.so
+RUN echo "extension=gd" >> /opt/php72/lib/ext.available/ext-gd.ini
+RUN ln -s /opt/php72/lib/ext.available/ext-gd.ini /opt/php72/lib/ext.enabled/
+
+RUN echo "extension=xml" >> /opt/php72/lib/ext.available/ext-xml.ini
+RUN ln -s /opt/php72/lib/ext.available/ext-xml.ini /opt/php72/lib/ext.enabled/
+
+RUN echo "extension=soap" >> /opt/php72/lib/ext.available/ext-soap.ini
+RUN ln -s /opt/php72/lib/ext.available/ext-soap.ini /opt/php72/lib/ext.enabled/
+
+RUN echo "extension=bcmath" >> /opt/php72/lib/ext.available/ext-bcmath.ini
+RUN ln -s /opt/php72/lib/ext.available/ext-bcmath.ini /opt/php72/lib/ext.enabled/
+
+RUN echo "extension=grpc" >> /opt/php72/lib/ext.available/ext-grpc.ini
+RUN ln -s /opt/php72/lib/ext.available/ext-grpc.ini /opt/php72/lib/ext.enabled/
+
+#RUN ln -s /usr/lib/php/20170718/xdebug.so /opt/php72/lib/x86_64-linux-gnu/extensions/no-debug-non-zts-20170718/xdebug.so
 
 ADD laravel/ /app/
 RUN chmod -R a+r /app
 
-RUN chmod -R 777 storage/
+RUN chmod -R 777 /app/storage/
 
 # Agregando directorio para subir archivos y asignando permisos.
 RUN mkdir -p /app/public/uploads
 RUN chmod 777 /app/public/uploads
 
 RUN composer install
-#RUN php artisan telescope:install
-RUN php artisan config:clear
-RUN php artisan cache:clear
+#RUN composer dump-autoload
 #RUN php artisan key:generate
+
 #RUN php artisan cache:config
 #RUN php artisan route:cache
+
+#RUN php artisan telescope:install
 # La migración se debe realizar en forma manual.
 #RUN php artisan:migrate
 
@@ -93,5 +109,3 @@ RUN ip -4 route list match 0/0 | awk '{print $3 "\thost.docker.internal"}' >> /e
 # RUN composer dump-autoload
 # RUN php artisan db:seed
 # RUN php artisan db:seed --class=AvatarSeeder
-
-

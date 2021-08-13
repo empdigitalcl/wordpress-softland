@@ -1,6 +1,7 @@
 <?php
 Route::get('bienes-servicios', 'SoapController@BienesServicios');
 Route::get('clima', 'SoapController@clima');
+Route::get('softland', 'SoftlandController@index');
 
 Route::get('/enduro/bienes-servicios', function () {
     try {

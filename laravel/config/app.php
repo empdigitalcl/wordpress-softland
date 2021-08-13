@@ -176,9 +176,9 @@ return [
         App\Providers\TelescopeServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
-        Reliese\Coders\CodersServiceProvider::class,
-        Artisaninweb\SoapWrapper\ServiceProvider::class,
-
+        // Artisaninweb\SoapWrapper\ServiceProvider::class,
+        //Custom
+        App\Providers\ApiDataServiceProvider::class,
 
     ],
 
