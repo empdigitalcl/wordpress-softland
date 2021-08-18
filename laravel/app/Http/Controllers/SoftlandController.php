@@ -15,6 +15,34 @@ class SoftlandController extends Controller
         return $this->getObtenerCatalogoProductosResponse();
     }
 
+    public function syncProducts() {
+        $products = $this->getObtenerProductosPorDescripcion();
+        $session = date('YmdHis');
+        if (count($products) > 0) {
+            foreach ($products as $product) {
+                $sync = Sync::BySku($product->codprod)->first();
+                if (!$sync) {
+                    $sync = new Sync();
+                    $sync->status = 1;
+                    $sync->sku = $product->codprod;
+                }
+                $isUpdate = false;
+                echo $product->codprod.'>'.$product->precvta.' !='. $sync->netPrice.'<br>';
+                if ($product->precvta != $sync->netPrice) {
+                    $isUpdate = true;
+                    $sync->netPrice = $product->precvta;
+                }
+                if ($isUpdate) {
+                    $sync->status = 1;
+                }
+                // $sync->soflandProductId = null;
+                // $sync->softlandProductId = null;
+                $sync->session = $session;
+                $sync->save();
+            }
+        }
+    }
+
     private function getObtenerProductosPorCodigo()
     {
         $dataRaw = '<?xml version="1.0" encoding="utf-8"?>
@@ -120,8 +148,9 @@ class SoftlandController extends Controller
             foreach ($results->productoUni as $key => $val) {
                 $products[] = $val;
             }
+            return $products;
             // return json_encode($products);
-            return response()->json($products, 200);
+            // return response()->json($products, 200);
         } else {
             dd($xml);
         }
