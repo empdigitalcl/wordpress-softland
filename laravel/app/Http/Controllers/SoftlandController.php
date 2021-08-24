@@ -330,6 +330,7 @@ class SoftlandController extends Controller
         </sof:IngresaNotadeVenta>
     </x:Body>
 </x:Envelope>';
+
     $url = 'https://web.softlandcloud.cl/ecommerce/WSNotaVenta.asmx?WSDL';
     $response = postSoapCurlRequest($url, null, $dataRaw);
     $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
