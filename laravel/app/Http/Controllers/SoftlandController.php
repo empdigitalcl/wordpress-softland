@@ -115,8 +115,11 @@ class SoftlandController extends Controller
 
     // Set the new timezone
     date_default_timezone_set('America/Cuiaba');
-    $dateFechaHoraCreacion = date('Y-m-d H:i:s');
+    $dateFechaHoraCreacion = date('Y-m-d');
+    $date_created =
+      $input['order_data']['date_created']['date'];
 
+    $date_created_Format = date("Y-m-d", strtotime($date_created));
 
     $nvPorcFlete = '0';
     //dd($nvPorcFlete);
@@ -136,7 +139,7 @@ class SoftlandController extends Controller
     $TotalBoleta = $input['order_data']['total'];
     $NumReq = '0';
     $EnMantencion = '0';
-    $nvFeAprob = $input['order_data']['date_created']['date'];
+    $nvFeAprob = $dateFechaHoraCreacion;
     $total = $input['order_data']['total'];
     $tax = $input['order_data']['total_tax'];
     $shipping_total = $input['order_data']['shipping_total'];
@@ -149,7 +152,7 @@ class SoftlandController extends Controller
     //dd($metadata[$arr]['value']); //para testing
     $RutCliente = $metadata[$arr]['value'];
     //dd("adsasdads=" . $RutCliente);
-    $nvFem = $input['order_data']['date_created']['date'];
+    $nvFem = $dateFechaHoraCreacion;
     $nvEstado = 'A';
     $nvEstFact = '0';
     $nvEstDesp = '0';
@@ -157,8 +160,8 @@ class SoftlandController extends Controller
     $nvEstConc = '0';
     $CotNum = '0';
     $NumOC = '-1';
-    $nvFeEnt = $input['order_data']['date_created']['date'];
-    $CodAux = '0';
+    $nvFeEnt = $dateFechaHoraCreacion;
+    $CodAux = '3';
     $VenCod = '01';
     $CodMon = '0';
     $CodLista = '0';
@@ -169,7 +172,7 @@ class SoftlandController extends Controller
     //dd($NomCon);
     $CodiCC = '0';
     $CodBode = '0';
-    $CodLugarDesp = '0';
+    //$CodLugarDesp = '0';
     $CorreoCliente = $input['order_data']['billing']['email'];
     $TipoDoctoVta = 'B';
     $ValorPorcentualImpuesto = '19';
@@ -228,9 +231,10 @@ class SoftlandController extends Controller
     foreach ($input['order_items'] as $orderItem) {
       $i++;
 
-      $subtotal+= $orderItem['subtotal'];
-      $subtotal_tax+= $orderItem['subtotal_tax'];
-      $nvCantVar+=  $subtotal + $subtotal_tax;
+      $subtotal = $orderItem['subtotal'];
+      $subtotal_tax = $orderItem['subtotal_tax'];
+      $nvCantVar =  $subtotal + $subtotal_tax;
+      //dd($nvCantVar);
       // Arma esructura con detalle productos que se repetira
       /* $NotaVentaDetalleDTO.='<sof:NotaVentaDetalleDTO>
       <sof:CantUVta>' . $CantUVta . '</sof:CantUVta>
@@ -273,7 +277,7 @@ class SoftlandController extends Controller
     }
     $nvCantVar = $nvCantVar + $nvCantVar;
 
-    print_r($nvCantVar);
+    //dd($nvCantVar);
 
     /*  $nvPrecio = ""; order_items.item[i].subtotal + order_items.item[i].subtotal_tax*/
     $nvPrecio = $nvCantVar;
@@ -347,15 +351,9 @@ class SoftlandController extends Controller
                     <sof:nvFeEnt>' . $nvFeEnt . '</sof:nvFeEnt>
                     <sof:CodAux>' . $CodAux . '</sof:CodAux>
                     <sof:VenCod>' . $VenCod . '</sof:VenCod>
-                    <sof:CodMon>' . $CodMon . '</sof:CodMon>
-                    <sof:CodLista>' . $CodLista . '</sof:CodLista>
                     <sof:nvObser>' . $nvObser . '</sof:nvObser>
-                    <sof:nvCanalNV>' . $nvCanalNV . '</sof:nvCanalNV>
                     <sof:CveCod>' . $CveCod . '</sof:CveCod>
                     <sof:NomCon>' . $NomCon . '</sof:NomCon>
-                    <sof:CodiCC>' . $CodiCC . '</sof:CodiCC>
-                    <sof:CodBode>' . $CodBode . '</sof:CodBode>
-                    <sof:CodLugarDesp>' . $CodLugarDesp . '</sof:CodLugarDesp>
                     <sof:CorreoCliente>' . $CorreoCliente . '</sof:CorreoCliente>
                     <sof:TipoDoctoVta>' . $TipoDoctoVta . '</sof:TipoDoctoVta>
                     <sof:impuestos>
@@ -378,7 +376,7 @@ class SoftlandController extends Controller
                     <sof:nvDescto05>' . $nvDescto05 . '</sof:nvDescto05>
                 </sof:Cabecera>
                 <sof:Detalles>
-                    '.$NotaVentaDetalleDTO.'
+                    ' . $NotaVentaDetalleDTO . '
                 </sof:Detalles>
             </sof:notaVenta>
             <sof:nombreContactoFacturaBoleta>' . $nombreContactoFacturaBoleta . '</sof:nombreContactoFacturaBoleta>
