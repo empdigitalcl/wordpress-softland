@@ -222,12 +222,52 @@ class SoftlandController extends Controller
 
     $i = 0;
     $nvCantVar = 0;
+    $subtotal = 0;
+    $subtotal_tax = 0;
+    $NotaVentaDetalleDTO = '';
     foreach ($input['order_items'] as $orderItem) {
       $i++;
 
-      $subtotal = $orderItem['subtotal'];
-      $subtotal_tax = $orderItem['subtotal_tax'];
-      $nvCantVar =  $subtotal + $subtotal_tax;
+      $subtotal+= $orderItem['subtotal'];
+      $subtotal_tax+= $orderItem['subtotal_tax'];
+      $nvCantVar+=  $subtotal + $subtotal_tax;
+      // Arma esructura con detalle productos que se repetira
+      /* $NotaVentaDetalleDTO.='<sof:NotaVentaDetalleDTO>
+      <sof:CantUVta>' . $CantUVta . '</sof:CantUVta>
+      <sof:CodUMed>' . $CodUMed . '</sof:CodUMed>
+      <sof:CodPromocion>' . $CodPromocion . '</sof:CodPromocion>
+      <sof:CheckeoMovporAlarmaVtas>' . $CheckeoMovporAlarmaVtas . '</sof:CheckeoMovporAlarmaVtas>
+      <sof:DetProd>' . $DetProd . '</sof:DetProd>
+      <sof:nvCantOC>' . $nvCantOC . '</sof:nvCantOC>
+      <sof:nvCantBoleta>' . $nvCantBoleta . '</sof:nvCantBoleta>
+      <sof:nvCantNC>' . $nvCantNC . '</sof:nvCantNC>
+      <sof:nvCantDevuelto>' . $nvCantDevuelto . '</sof:nvCantDevuelto>
+      <sof:nvCantFact>' . $nvCantFact . '</sof:nvCantFact>
+      <sof:Partida>' . $Partida . '</sof:Partida>
+      <sof:nvCantProd>' . $nvCantProd . '</sof:nvCantProd>
+      <sof:nvTotLinea>' . $nvTotLinea . '</sof:nvTotLinea>
+      <sof:nvSubTotal>' . $nvSubTotal . '</sof:nvSubTotal>
+      <sof:nvEquiv>' . $nvEquiv . '</sof:nvEquiv>
+      <sof:nvPrecio>' . $nvPrecio . '</sof:nvPrecio>
+      <sof:nvCant>' . $nvCant . '</sof:nvCant>
+      <sof:CodProd>' . $CodProd . '</sof:CodProd>
+      <sof:nvFecCompr>' . $nvFecCompr . '</sof:nvFecCompr>
+      <sof:nvCorrela>' . $nvCorrela . '</sof:nvCorrela>
+      <sof:nvLinea>' . $nvLinea . '</sof:nvLinea>
+      <sof:nvCantDesp>' . $nvCantDesp . '</sof:nvCantDesp>
+      <sof:Pieza>' . $Pieza . '</sof:Pieza>
+      <sof:nvDPorcDesc01>' . $nvDPorcDesc01 . '</sof:nvDPorcDesc01>
+      <sof:nvDPorcDesc02>' . $nvDPorcDesc02 . '</sof:nvDPorcDesc02>
+      <sof:nvDPorcDesc03>' . $nvDPorcDesc03 . '</sof:nvDPorcDesc03>
+      <sof:nvDPorcDesc04>' . $nvDPorcDesc04 . '</sof:nvDPorcDesc04>
+      <sof:nvDPorcDesc05>' . $nvDPorcDesc05 . '</sof:nvDPorcDesc05>
+      <sof:nvDDescto01>' . $nvDDescto01 . '</sof:nvDDescto01>
+      <sof:nvDDescto02>' . $nvDDescto02 . '</sof:nvDDescto02>
+      <sof:nvDDescto03>' . $nvDDescto03 . '</sof:nvDDescto03>
+      <sof:nvDDescto04>' . $nvDDescto04 . '</sof:nvDDescto04>
+      <sof:nvDDescto05>' . $nvDDescto05 . '</sof:nvDDescto05>
+      <sof:nvTotDesc>' . $nvTotDesc . '</sof:nvTotDesc>
+  </sof:NotaVentaDetalleDTO>'; */
 
       //dd("sadasd" . $nvCantVar);
     }
@@ -338,42 +378,7 @@ class SoftlandController extends Controller
                     <sof:nvDescto05>' . $nvDescto05 . '</sof:nvDescto05>
                 </sof:Cabecera>
                 <sof:Detalles>
-                    <sof:NotaVentaDetalleDTO>
-                        <sof:CantUVta>' . $CantUVta . '</sof:CantUVta>
-                        <sof:CodUMed>' . $CodUMed . '</sof:CodUMed>
-                        <sof:CodPromocion>' . $CodPromocion . '</sof:CodPromocion>
-                        <sof:CheckeoMovporAlarmaVtas>' . $CheckeoMovporAlarmaVtas . '</sof:CheckeoMovporAlarmaVtas>
-                        <sof:DetProd>' . $DetProd . '</sof:DetProd>
-                        <sof:nvCantOC>' . $nvCantOC . '</sof:nvCantOC>
-                        <sof:nvCantBoleta>' . $nvCantBoleta . '</sof:nvCantBoleta>
-                        <sof:nvCantNC>' . $nvCantNC . '</sof:nvCantNC>
-                        <sof:nvCantDevuelto>' . $nvCantDevuelto . '</sof:nvCantDevuelto>
-                        <sof:nvCantFact>' . $nvCantFact . '</sof:nvCantFact>
-                        <sof:Partida>' . $Partida . '</sof:Partida>
-                        <sof:nvCantProd>' . $nvCantProd . '</sof:nvCantProd>
-                        <sof:nvTotLinea>' . $nvTotLinea . '</sof:nvTotLinea>
-                        <sof:nvSubTotal>' . $nvSubTotal . '</sof:nvSubTotal>
-                        <sof:nvEquiv>' . $nvEquiv . '</sof:nvEquiv>
-                        <sof:nvPrecio>' . $nvPrecio . '</sof:nvPrecio>
-                        <sof:nvCant>' . $nvCant . '</sof:nvCant>
-                        <sof:CodProd>' . $CodProd . '</sof:CodProd>
-                        <sof:nvFecCompr>' . $nvFecCompr . '</sof:nvFecCompr>
-                        <sof:nvCorrela>' . $nvCorrela . '</sof:nvCorrela>
-                        <sof:nvLinea>' . $nvLinea . '</sof:nvLinea>
-                        <sof:nvCantDesp>' . $nvCantDesp . '</sof:nvCantDesp>
-                        <sof:Pieza>' . $Pieza . '</sof:Pieza>
-                        <sof:nvDPorcDesc01>' . $nvDPorcDesc01 . '</sof:nvDPorcDesc01>
-                        <sof:nvDPorcDesc02>' . $nvDPorcDesc02 . '</sof:nvDPorcDesc02>
-                        <sof:nvDPorcDesc03>' . $nvDPorcDesc03 . '</sof:nvDPorcDesc03>
-                        <sof:nvDPorcDesc04>' . $nvDPorcDesc04 . '</sof:nvDPorcDesc04>
-                        <sof:nvDPorcDesc05>' . $nvDPorcDesc05 . '</sof:nvDPorcDesc05>
-                        <sof:nvDDescto01>' . $nvDDescto01 . '</sof:nvDDescto01>
-                        <sof:nvDDescto02>' . $nvDDescto02 . '</sof:nvDDescto02>
-                        <sof:nvDDescto03>' . $nvDDescto03 . '</sof:nvDDescto03>
-                        <sof:nvDDescto04>' . $nvDDescto04 . '</sof:nvDDescto04>
-                        <sof:nvDDescto05>' . $nvDDescto05 . '</sof:nvDDescto05>
-                        <sof:nvTotDesc>' . $nvTotDesc . '</sof:nvTotDesc>
-                    </sof:NotaVentaDetalleDTO>
+                    '.$NotaVentaDetalleDTO.'
                 </sof:Detalles>
             </sof:notaVenta>
             <sof:nombreContactoFacturaBoleta>' . $nombreContactoFacturaBoleta . '</sof:nombreContactoFacturaBoleta>
