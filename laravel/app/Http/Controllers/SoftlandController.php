@@ -57,9 +57,9 @@ class SoftlandController extends Controller
 
     $metadata = $input['order_data']['meta_data'];
 
-    $arr = array_search('_billing_rut', array_column($metadata, 'key'));
 
-    dd($metadata[$arr]['id']); //para testing
+
+    //dd($input['order_data']['shipping_total']); //para testing
 
 
     //$nvValflete = $metadata[$arr]['id'];
@@ -113,101 +113,153 @@ class SoftlandController extends Controller
     }*/
 
 
+    // Set the new timezone
+    date_default_timezone_set('America/Cuiaba');
+    $dateFechaHoraCreacion = date('Y-m-d H:i:s');
 
 
-    $nvPorcFlete = $input['order_data']['date_created']['date'];
-    $nvValflete = "";
-    $nvPorcEmb = "";
-    $nvValEmb = "";
-    $nvEquiv = "";
-    $nvNetoExento = "";
-    $nvNetoAfecto = "";
-    $nvTotalDesc = "";
-    $ConcAuto = "";
-    $NumGuiaRes = "";
-    $CheckeoPorAlarmaVtas = "";
-    $FechaHoraCreacion = "";
-    $ConcManual = "";
-    $RutSolicitante = "";
-    $TotalBoleta = "";
-    $NumReq = "";
-    $EnMantencion = "";
-    $nvFeAprob = "";
-    $nvMonto = "";
-    $nvSubTotal = "";
-    $RutCliente = "";
-    $nvFem = "";
-    $nvEstado = "";
-    $nvEstFact = "";
-    $nvEstDesp = "";
-    $nvEstRese = "";
-    $nvEstConc = "";
-    $CotNum = "";
-    $NumOC = "";
-    $nvFeEnt = "";
-    $CodAux = "";
-    $VenCod = "";
-    $CodMon = "";
-    $CodLista = "";
-    $nvObser = "";
-    $nvCanalNV = "";
-    $CveCod = "";
-    $NomCon = "";
-    $CodiCC = "";
-    $CodBode = "";
-    $CodLugarDesp = "";
-    $CorreoCliente = "";
-    $TipoDoctoVta = "";
-    $ValorPorcentualImpuesto = "";
-    $AfectoAImpuesto = "";
-    $MontoImpuesto = "";
-    $nvPorcDesc01 = "";
-    $nvPorcDesc02 = "";
-    $nvPorcDesc03 = "";
-    $nvPorcDesc04 = "";
-    $nvPorcDesc05 = "";
-    $nvDescto01 = "";
-    $nvDescto02 = "";
-    $nvDescto03 = "";
-    $nvDescto04 = "";
-    $nvDescto05 = "";
-    $CantUVta = "";
-    $CodUMed = "";
-    $CodPromocion = "";
-    $CheckeoMovporAlarmaVtas = "";
-    $DetProd = "";
-    $nvCantOC = "";
-    $nvCantBoleta = "";
-    $nvCantNC = "";
-    $nvCantDevuelto = "";
-    $nvCantFact = "";
-    $Partida = "";
-    $nvCantProd = "";
-    $nvTotLinea = "";
-    $nvSubTotal = "";
-    $nvEquiv = "";
-    $nvPrecio = "";
-    $nvCant = "";
-    $CodProd = "";
-    $nvFecCompr = "";
-    $nvCorrela = "";
-    $nvLinea = "";
-    $nvCantDesp = "";
-    $Pieza = "";
-    $nvDPorcDesc01 = "";
-    $nvDPorcDesc02 = "";
-    $nvDPorcDesc03 = "";
-    $nvDPorcDesc04 = "";
-    $nvDPorcDesc05 = "";
-    $nvDDescto01 = "";
-    $nvDDescto02 = "";
-    $nvDDescto03 = "";
-    $nvDDescto04 = "";
-    $nvDDescto05 = "";
-    $nvTotDesc = "";
-    $nombreContactoFacturaBoleta = "";
-    $Token = "";
-    $enviaPdf = "";
+    $nvPorcFlete = '0';
+    //dd($nvPorcFlete);
+    $nvValflete = $input['order_data']['shipping_total'];
+    $nvPorcEmb = '0';
+    $nvValEmb = '0';
+    $nvEquiv = '1';
+    $nvNetoExento = '0';
+    $nvNetoAfecto = $input['order_data']['total'];
+    $nvTotalDesc = $input['order_data']['discount_total'];
+    $ConcAuto = 'N';
+    $NumGuiaRes = '0';
+    $CheckeoPorAlarmaVtas = 'N';
+    $FechaHoraCreacion = $dateFechaHoraCreacion;
+    $ConcManual = 'N';
+    $RutSolicitante = '0';
+    $TotalBoleta = $input['order_data']['total'];
+    $NumReq = '0';
+    $EnMantencion = '0';
+    $nvFeAprob = $input['order_data']['date_created']['date'];
+    $total = $input['order_data']['total'];
+    $tax = $input['order_data']['total_tax'];
+    $shipping_total = $input['order_data']['shipping_total'];
+    $discount_total = $input['order_data']['discount_total'];
+    $discount_tax = $input['order_data']['discount_tax'];
+    $nvMonto = $input['order_data']['total'];
+    $nvSubTotal = $total + $tax + $shipping_total - $discount_total - $discount_tax;
+    $metadata = $input['order_data']['meta_data'];
+    $arr = array_search('_billing_rut', array_column($metadata, 'key'));
+    //dd($metadata[$arr]['value']); //para testing
+    $RutCliente = $metadata[$arr]['value'];
+    //dd("adsasdads=" . $RutCliente);
+    $nvFem = $input['order_data']['date_created']['date'];
+    $nvEstado = 'A';
+    $nvEstFact = '0';
+    $nvEstDesp = '0';
+    $nvEstRese = '0';
+    $nvEstConc = '0';
+    $CotNum = '0';
+    $NumOC = '-1';
+    $nvFeEnt = $input['order_data']['date_created']['date'];
+    $CodAux = '0';
+    $VenCod = '01';
+    $CodMon = '0';
+    $CodLista = '0';
+    $nvObser = '0';
+    $nvCanalNV = '0';
+    $CveCod = '01';
+    $NomCon = $input['order_data']['billing']['first_name'] . '  '  . $input['order_data']['billing']['last_name'];
+    //dd($NomCon);
+    $CodiCC = '0';
+    $CodBode = '0';
+    $CodLugarDesp = '0';
+    $CorreoCliente = $input['order_data']['billing']['email'];
+    $TipoDoctoVta = 'B';
+    $ValorPorcentualImpuesto = '19';
+    $AfectoAImpuesto = '100';
+    $MontoImpuesto = $tax;
+    $nvPorcDesc01 = '0';
+    $nvPorcDesc02 = '0';
+    $nvPorcDesc03 = '0';
+    $nvPorcDesc04 = '0';
+    $nvPorcDesc05 = '0';
+    $nvDescto01 = '0';
+    $nvDescto02 = '0';
+    $nvDescto03 = '0';
+    $nvDescto04 = '0';
+    $nvDescto05 = '0';
+    $CantUVta = '1';
+    $CodUMed = 'C.U';
+    $CodPromocion = '0';
+    $CheckeoMovporAlarmaVtas = 'N';
+    $DetProd = 'Producto prueba';
+
+    $i = 0;
+    $nvCantOCProdTotal = 0;
+    foreach ($input['order_items'] as $orderItem) {
+      $i++;
+      $nvCantOCProdTotal++;
+    }
+
+    // dd("saddasasda=" . $nvCantOCProdTotal);
+
+
+    $nvCantOC = $nvCantOCProdTotal;
+    //dd($nvCantOC);
+
+
+    $nvCantBoleta = $nvCantOCProdTotal;
+    $nvCantNC = '0';
+    $nvCantDevuelto = '0';
+    $nvCantFact = $nvCantOCProdTotal;
+    $Partida = '0';
+    $nvCantProd = '0';
+    $nvTotLinea = '119';
+    $nvSubTotal = '119';
+    $nvEquiv = '1';
+
+
+
+    /*   este ciclo for linea 223 es relacionado a $nvPrecio  linea 64 en excel ,  = ""; order_items.item[i].subtotal + order_items.item[i].subtotal_tax*/
+
+
+    $i = 0;
+    $nvCantVar = 0;
+    foreach ($input['order_items'] as $orderItem) {
+      $i++;
+
+      $subtotal = $orderItem['subtotal'];
+      $subtotal_tax = $orderItem['subtotal_tax'];
+      $nvCantVar =  $subtotal + $subtotal_tax;
+
+      //dd("sadasd" . $nvCantVar);
+    }
+    $nvCantVar = $nvCantVar + $nvCantVar;
+
+    print_r($nvCantVar);
+
+    /*  $nvPrecio = ""; order_items.item[i].subtotal + order_items.item[i].subtotal_tax*/
+    $nvPrecio = $nvCantVar;
+    $nvCant = $nvCantOCProdTotal;
+    $CodProd = '0';
+    $nvFecCompr =
+      $input['order_data']['date_created']['date'];
+    $nvCorrela = '0';
+    $nvLinea = '0';
+    $nvCantDesp = '0';
+    $Pieza = '0';
+    $nvDPorcDesc01 = '0';
+    $nvDPorcDesc02 = '0';
+    $nvDPorcDesc03 = '0';
+    $nvDPorcDesc04 = '0';
+    $nvDPorcDesc05 = '0';
+    $nvDDescto01 = '0';
+    $nvDDescto02 = '0';
+    $nvDDescto03 = '0';
+    $nvDDescto04 = '0';
+    $nvDDescto05 = '0';
+    $nvTotDesc = '0';
+    $nombreContactoFacturaBoleta =
+      $input['order_data']['billing']['first_name'] . '  '  . $input['order_data']['billing']['last_name'];
+    $Token = '';
+    $enviaPdf = '0';
 
 
 
