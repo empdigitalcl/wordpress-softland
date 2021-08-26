@@ -222,21 +222,16 @@ class SoftlandController extends Controller
 
     /*   este ciclo for linea 223 es relacionado a $nvPrecio  linea 64 en excel ,  = ""; order_items.item[i].subtotal + order_items.item[i].subtotal_tax*/
 
-
-    $i = 0;
-    $nvCantVar = 0;
-    $subtotal = 0;
-    $subtotal_tax = 0;
     $NotaVentaDetalleDTO = '';
-    foreach ($input['order_items'] as $orderItem) {
+    /*foreach ($input['order_items'] as $orderItem) {
       $i++;
 
       $subtotal = $orderItem['subtotal'];
       $subtotal_tax = $orderItem['subtotal_tax'];
-      $nvCantVar =  $subtotal + $subtotal_tax;
-      //dd($nvCantVar);
-      // Arma esructura con detalle productos que se repetira
-      /* $NotaVentaDetalleDTO.='<sof:NotaVentaDetalleDTO>
+      $nvCantVar =  $subtotal + $subtotal_tax;*/
+    //dd($nvCantVar);
+    // Arma esructura con detalle productos que se repetira
+    /* $NotaVentaDetalleDTO.='<sof:NotaVentaDetalleDTO>
       <sof:CantUVta>' . $CantUVta . '</sof:CantUVta>
       <sof:CodUMed>' . $CodUMed . '</sof:CodUMed>
       <sof:CodPromocion>' . $CodPromocion . '</sof:CodPromocion>
@@ -272,15 +267,19 @@ class SoftlandController extends Controller
       <sof:nvDDescto05>' . $nvDDescto05 . '</sof:nvDDescto05>
       <sof:nvTotDesc>' . $nvTotDesc . '</sof:nvTotDesc>
   </sof:NotaVentaDetalleDTO>'; */
+    /* }*/
 
-      //dd("sadasd" . $nvCantVar);
+    $nvCantTotal = 0;
+    foreach ($input['order_items'] as $orderItem) {
+      $subtotal = $orderItem['subtotal'];
+      $subtotal_tax = $orderItem['subtotal_tax'];
+      $nvCantTotal += $subtotal + $subtotal_tax;
     }
-    $nvCantVar = $nvCantVar + $nvCantVar;
 
-    //dd($nvCantVar);
+    // dd($nvCantTotal);
 
     /*  $nvPrecio = ""; order_items.item[i].subtotal + order_items.item[i].subtotal_tax*/
-    $nvPrecio = $nvCantVar;
+    $nvPrecio = $nvCantTotal;
     $nvCant = $nvCantOCProdTotal;
     $CodProd = '0';
     $nvFecCompr =
@@ -389,20 +388,60 @@ class SoftlandController extends Controller
     $url = 'https://web.softlandcloud.cl/ecommerce/WSNotaVenta.asmx?WSDL';
     $response = postSoapCurlRequest($url, null, $dataRaw);
     $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
-    $xml = new \SimpleXMLElement($response);
-    dd($xml);
-    if ($xml->soapBody && $xml->soapBody->IngresaNotadeVentaResponse && $xml->soapBody->IngresaNotadeVentaResponse->IngresaNotadeVentaResult && $xml->soapBody->IngresaNotadeVentaResponse->IngresaNotadeVentaResult) {
+    $response = new \SimpleXMLElement($response);
+
+    $response = json_encode($response);
+    $response = json_decode($response, TRUE);
+
+    $ventaResult = $response['soapBody']['IngresaNotadeVentaResponse']['IngresaNotadeVentaResult'];
+
+    //dd($response);
+
+
+    /*if ($xml->soapBody && $xml->soapBody->IngresaNotadeVentaResponse && $xml->soapBody->IngresaNotadeVentaResponse->IngresaNotadeVentaResult && $xml->soapBody->IngresaNotadeVentaResponse->IngresaNotadeVentaResult) {
       $results = $xml->soapBody->IngresaNotadeVentaResponse->IngresaNotadeVentaResult;
-      $products = [];
-      foreach ($results->IngresaNotadeVentaResult as $key => $val) {
+      $products = [];*/
+    /* foreach ($results->IngresaNotadeVentaResult as $key => $val) {
         $products[] = $val;
-      }
-      // return json_encode($products);
-      return response()->json($products, 200);
-    } else {
+      }*/
+    // return json_encode($products);
+    //return response()->json($products, 200);
+    /* } else {
       dd($xml);
-    }
+    }*/
+
+    $formatUpdateWcOrder = $this->formatUpdateWcOrder($ventaResult);
+    // dd($formatUpdateWcOrder); //para testing
+
+    $update = $this->updateWcOrder($input['order_data']['id'], $formatUpdateWcOrder);
+    return $update;
   }
+
+
+  public function formatUpdateWcOrder($ventaResult)
+  {
+    $data = [
+      'meta_data' => [
+        [
+          'key' => '_erp_external_order',
+          'value' => $ventaResult,
+        ],
+      ]
+    ];
+    return $data;
+  }
+
+  public function updateWcOrder($orderId, $data)
+  {
+    $uri = $this->wpBaseUri . '/orders/' . $orderId;
+    $wcGet = putCurlRequest($uri, $this->wcHeaders, $data);
+    $wcGet = json_decode($wcGet, true);
+    return $wcGet;
+  }
+
+
+
+
 
 
 
