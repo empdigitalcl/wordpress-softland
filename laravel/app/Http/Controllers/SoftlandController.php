@@ -19,7 +19,7 @@ class SoftlandController extends Controller
     $this->codEmpresa = env('SOFTLAND_EMPRESA') != '' ? base64_encode(env('SOFTLAND_EMPRESA')) : base64_encode('CORSE1');
 
 
-    $this->wpBaseUri = env('WP_BASE_URI') != '' ? env('WP_BASE_URI') : 'https://amanodev.empchile.net/wp-json/wc/v3';
+    $this->wpBaseUri = env('WP_BASE_URI') != '' ? env('WP_BASE_URI') : 'https://tienda.ducatichile.cl/wp-json/wc/v3';
     $this->wcUser = env('WC_USERNAME') != '' ? env('WC_USERNAME') : 'ck_22f7c4a3c672fc928b85aada067841e47535216a';
     $this->wcPassword = env('WC_PASSWORD') != '' ? env('WC_PASSWORD') : 'cs_8f1947554a5822b6e09f1a24d41a2bfecd05d40d';
 
@@ -397,19 +397,6 @@ class SoftlandController extends Controller
 
     //dd($response);
 
-
-    /*if ($xml->soapBody && $xml->soapBody->IngresaNotadeVentaResponse && $xml->soapBody->IngresaNotadeVentaResponse->IngresaNotadeVentaResult && $xml->soapBody->IngresaNotadeVentaResponse->IngresaNotadeVentaResult) {
-      $results = $xml->soapBody->IngresaNotadeVentaResponse->IngresaNotadeVentaResult;
-      $products = [];*/
-    /* foreach ($results->IngresaNotadeVentaResult as $key => $val) {
-        $products[] = $val;
-      }*/
-    // return json_encode($products);
-    //return response()->json($products, 200);
-    /* } else {
-      dd($xml);
-    }*/
-
     $formatUpdateWcOrder = $this->formatUpdateWcOrder($ventaResult);
     // dd($formatUpdateWcOrder); //para testing
 
@@ -423,7 +410,7 @@ class SoftlandController extends Controller
     $data = [
       'meta_data' => [
         [
-          'key' => '_erp_external_order',
+          'key' => 'NotaVentaId',
           'value' => $ventaResult,
         ],
       ]
