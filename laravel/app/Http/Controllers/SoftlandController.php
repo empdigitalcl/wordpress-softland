@@ -395,12 +395,13 @@ class SoftlandController extends Controller
 
     $ventaResult = $response['soapBody']['IngresaNotadeVentaResponse']['IngresaNotadeVentaResult'];
 
-    //dd($response);
+    //dd($ventaResult);
 
     $formatUpdateWcOrder = $this->formatUpdateWcOrder($ventaResult);
     // dd($formatUpdateWcOrder); //para testing
 
     $update = $this->updateWcOrder($input['order_data']['id'], $formatUpdateWcOrder);
+    //dd($input['order_data']['id']);
     return $update;
   }
 
