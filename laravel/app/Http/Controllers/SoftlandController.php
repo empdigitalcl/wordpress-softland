@@ -422,6 +422,7 @@ class SoftlandController extends Controller
   public function updateWcOrder($orderId, $data)
   {
     $uri = $this->wpBaseUri . '/orders/' . $orderId;
+    //dd($uri);
     $wcGet = putCurlRequest($uri, $this->wcHeaders, $data);
     $wcGet = json_decode($wcGet, true);
     return $wcGet;
