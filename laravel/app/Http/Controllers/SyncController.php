@@ -16,11 +16,11 @@ class SyncController extends Controller
     public function __construct(
     )
     {
-      $this->endPoint = env('LAUDUS_ENDPOINT') != '' ? env('LAUDUS_ENDPOINT') : 'https://erp.laudus.cl/api/';
-      $this->user = env('LAUDUS_USER') != '' ? env('LAUDUS_USER') : '';
-      $this->password = env('LAUDUS_PASSWORD') != '' ? env('LAUDUS_PASSWORD') : '';
-      $this->companyVatId = env('LAUDUS_COMPANY_VAT_ID') != '' ? env('LAUDUS_COMPANY_VAT_ID') : '';
-      $this->wharehouseId = env('LAUDUS_WAREHOUSE_ID') != '' ? env('LAUDUS_WAREHOUSE_ID') : '';
+      $this->endPoint = env('ERP_ENDPOINT') != '' ? env('ERP_ENDPOINT') : 'https://erp.laudus.cl/api/';
+      $this->user = env('ERP_USER') != '' ? env('ERP_USER') : '';
+      $this->password = env('ERP_PASSWORD') != '' ? env('ERP_PASSWORD') : '';
+      $this->companyVatId = env('ERP_COMPANY_VAT_ID') != '' ? env('ERP_COMPANY_VAT_ID') : '';
+      $this->wharehouseId = env('ERP_WAREHOUSE_ID') != '' ? env('ERP_WAREHOUSE_ID') : '';
       $this->laudusToken = null;
     }
     public function index(){
@@ -28,10 +28,10 @@ class SyncController extends Controller
         var_dump($result);
     }
     public function config(){
-        /* echo 'user = '.env('LAUDUS_USER').'<br>';
-        echo 'password = '.env('LAUDUS_PASSWORD').'<br>'; */
-        echo 'companyVatId = '.env('LAUDUS_COMPANY_VAT_ID').'<br>';
-        echo 'wharehouseId = '.env('LAUDUS_WAREHOUSE_ID').'<br>';
+        /* echo 'user = '.env('ERP_USER').'<br>';
+        echo 'password = '.env('ERP_PASSWORD').'<br>'; */
+        echo 'companyVatId = '.env('ERP_COMPANY_VAT_ID').'<br>';
+        echo 'wharehouseId = '.env('ERP_WAREHOUSE_ID').'<br>';
     }
     private function wpConnection ($function=null, $method='GET', $data=array())
     {

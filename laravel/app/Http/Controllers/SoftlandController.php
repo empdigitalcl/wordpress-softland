@@ -9,7 +9,8 @@ use App\Sync;
 
 class SoftlandController extends Controller
 {
-
+    //
+    
 
   public function __construct()
   {
@@ -437,7 +438,8 @@ class SoftlandController extends Controller
 
   public function syncProducts()
   {
-    $products = $this->getObtenerProductosPorDescripcion();
+    $products = $this->getObtenerCatalogoProductosResponse();
+    // dd($products);
     $session = date('YmdHis');
     if (count($products) > 0) {
       foreach ($products as $product) {
@@ -462,6 +464,7 @@ class SoftlandController extends Controller
         $sync->save();
       }
     }
+    dd($products);
   }
 
 
@@ -633,16 +636,16 @@ class SoftlandController extends Controller
     $url = 'http://web.softlandcloud.cl/ecommerce/WSProducto.asmx?WSDL';
     $response = postSoapCurlRequest($url, null, $dataRaw);
     $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
-    dd($response);
     $xml = new \SimpleXMLElement($response);
-    if ($xml->soapBody && $xml->soapBody->ObtenerCatalogoProductosResponse && $xml->soapBody->ObtenerCatalogoProductosResponse->ObtenerCatalogoProductosResult && $xml->soapBody->ObtenerCatalogoProductosResponse->ObtenerCatalogoProductosResult->productoUni) {
-      $results = $xml->soapBody->ObtenerCatalogoProductosResponse->ObtenerCatalogoProductosResult;
+    if ($xml->soapBody && $xml->soapBody->ObtenerCatalogoProductosResponse && $xml->soapBody->ObtenerCatalogoProductosResponse->ObtenerCatalogoProductosResult && $xml->soapBody->ObtenerCatalogoProductosResponse->ObtenerCatalogoProductosResult->Catalogo) {
+      $results = $xml->soapBody->ObtenerCatalogoProductosResponse->ObtenerCatalogoProductosResult->Catalogo;
+      
       $products = [];
       foreach ($results->productoUni as $key => $val) {
         $products[] = $val;
       }
-      // return json_encode($products);
-      return response()->json($products, 200);
+      return $products;
+      // return response()->json($products, 200);
     } else {
       dd($xml);
     }
