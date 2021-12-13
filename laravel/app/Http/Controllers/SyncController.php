@@ -212,11 +212,11 @@ class SyncController extends Controller
                         $fields = [
                             'catalog_visibility' => $sync->netPrice > 1000 ? 'visible' : 'hidden',
                             'status' => $sync->netPrice > 1000 ? 'publish' : 'pending',
-                            'regular_price' => (string)($sync->netPrice),
+                            'regular_price' => (string)(round($sync->netPrice*1.19)),
                             'stock_quantity' => $sync->stockAvailable > 0 ? (string)($sync->stockAvailable) : '0'
                         ];
                         if ($item['type'] != 'variation') {
-                            $fields['regular_price'] = (string)($sync->netPrice);
+                            $fields['regular_price'] = (string)(round($sync->netPrice*1.19));
                         }
                         try {
                             if ($item['type'] != 'variation') {
@@ -260,7 +260,7 @@ class SyncController extends Controller
                         $fields = [
                             'catalog_visibility' => $sync->netPrice > 1000 ? 'visible' : 'hidden',
                             'status' => $sync->netPrice > 1000 ? 'publish' : 'pending',
-                            'regular_price' => (string)($sync->netPrice),
+                            'regular_price' => (string)(round($sync->netPrice*1.19)),
                             'stock_quantity' => $sync->stockAvailable > 0 ? (string)($sync->stockAvailable) : '0'
                         ];
                         $this->getWoocProduct($item['id'], $item['type'], $item['parent_id'], $fields);
