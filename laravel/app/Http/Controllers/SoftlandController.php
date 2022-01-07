@@ -193,9 +193,14 @@ class SoftlandController extends Controller
         // return $this->wpConnection('products', 'GET', $params);
         return Woocommerce::get('products', $params);
     }
-
+    public function test(Request $request)
+    {
+        echo 'fff';
+        return 'x';
+    }
     public function postIngresaNotadeVenta(Request $request)
     {
+        
         $input = $request->all();
 
         $url = 'https://web.softlandcloud.cl/ecommerce/WSNotaVenta.asmx?WSDL';
