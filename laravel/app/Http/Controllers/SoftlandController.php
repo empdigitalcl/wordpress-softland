@@ -198,6 +198,104 @@ class SoftlandController extends Controller
         echo 'fff';
         return 'x';
     }
+    private function insertarCliente($cliente)
+    {
+        
+        $url = 'https://web.softlandcloud.cl/ecommerce/WSCWTauxi.asmx?WSDL';
+        $dataRaw = '<?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Header>
+        <AuthHeader xmlns="http://softland.cl/">
+        <Username>STORE</Username>
+        <Password>softland</Password>
+        </AuthHeader>
+        </soap:Header>
+        <soap:Body>
+        <AgregaAuxiliares xmlns="http://softland.cl/">
+        <Cliente>
+        <strConn></strConn>
+        <CodAux>'.str_replace(['.', '-'], ['', ''], $cliente['rut']).'</CodAux>
+        <NomAux>'.$cliente['nombre'].'</NomAux>
+        <NoFAux></NoFAux>
+        <RutAux>'.$cliente['rut'].'</RutAux>
+        <ActAux>S</ActAux>
+        <GirAux></GirAux>
+        <ComAux></ComAux>
+        <CiuAux></CiuAux>
+        <PaiAux>CL</PaiAux>
+        <DirAux>'.$cliente['direccion'].'</DirAux>
+        <DirNum>'.$cliente['direccion2'].'</DirNum>
+        <FonAux1>'.$cliente['phone'].'</FonAux1>
+        <FonAux2></FonAux2>
+        <FonAux3></FonAux3>
+        <FaxAux1></FaxAux1>
+        <FaxAux2></FaxAux2>
+        <ClaCli>S</ClaCli>
+        <ClaPro>N</ClaPro>
+        <ClaEmp>N</ClaEmp>
+        <ClaSoc>N</ClaSoc>
+        <ClaDis>N</ClaDis>
+        <ClaOtr>N</ClaOtr>
+        <DiaPlazo></DiaPlazo>
+        <Bloqueado></Bloqueado>
+        <EMail>'.$cliente['email'].'</EMail>
+        <Casilla></Casilla>
+        <WebSite></WebSite>
+        <Notas></Notas>
+        <Region>-1</Region>
+        <ClaPros>N</ClaPros>
+        <esReceptorDTE></esReceptorDTE>
+        </Cliente>
+        <Empresa>CORSE1</Empresa>
+        </AgregaAuxiliares>
+        </soap:Body>
+        </soap:Envelope>';
+        $response = postSoapCurlRequest($url, null, $dataRaw);
+        $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
+        $response = new \SimpleXMLElement($response);
+
+        $response = json_encode($response);
+        $response = json_decode($response, true);
+
+        //dd($response);
+        
+    }
+    private function postConsultarCliente($cliente)
+    {
+        $url = 'https://web.softlandcloud.cl/ecommerce/WSCWTauxi.asmx?WSDL';
+        $dataRaw = '<?xml version="1.0" encoding="utf-8"?> 
+        <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xsd="http://www.w3.org/2001/XMLSchema"  
+        xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"> 
+         <soap:Header> 
+         <AuthHeader xmlns="http://softland.cl/"> 
+         <Username>STORE</Username>
+        <Password>softland</Password> 
+         </AuthHeader> 
+         </soap:Header> 
+         <soap:Body>
+         <ObtieneAuxiliaresxCodigo xmlns="http://softland.cl/"> 
+         <Codaux>'.str_replace(['.', '-'], ['', ''], $cliente['rut']).'</Codaux> 
+         <Empresa>CORSE1</Empresa> 
+         </ObtieneAuxiliaresxCodigo>
+         </soap:Body> 
+        </soap:Envelope>';
+        $response = postSoapCurlRequest($url, null, $dataRaw);
+        $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
+        $response = new \SimpleXMLElement($response);
+
+        $response = json_encode($response);
+        $response = json_decode($response, true);
+
+        
+        if ($c = $response['soapBody']['ObtieneAuxiliaresxCodigoResponse']['ObtieneAuxiliaresxCodigoResult']) {
+
+        } else {
+            //$this->insertarCliente($cliente);
+        }
+        
+    }
     public function postIngresaNotadeVenta(Request $request)
     {
         
@@ -211,7 +309,7 @@ class SoftlandController extends Controller
 
         $response = json_encode($response);
         $response = json_decode($response, true);
-
+        dd($dataRaw, $response);
         $ventaResult = $response['soapBody']['IngresaNotadeVentaResponse']['IngresaNotadeVentaResult'];
         $formatUpdateWcOrder = $this->formatUpdateWcOrder($ventaResult);
         $update = $this->updateWcOrder($input['order_data']['id'], $formatUpdateWcOrder);
@@ -225,10 +323,15 @@ class SoftlandController extends Controller
         $CorreoCliente = $orderData['billing']['email'];
         $RutCliente = '';
         $TipoDoctoVta = '';
+        $comprobante = '';
+        $phone = $orderData['billing']['phone'];
         if (count($orderData['meta_data']) > 0) {
             foreach ($orderData['meta_data'] as $metaData) {
                 if ($metaData['key'] == '_billing_rut') {
                     $RutCliente = $metaData['value'];
+                }
+                if ($metaData['key'] == '_billing_dte_type') {
+                    $comprobante = $metaData['value'];
                 }
                 if ($metaData['key'] == '_billing_dte_type') {
                     if ($metaData['value'] == 'boleta') {
@@ -241,6 +344,32 @@ class SoftlandController extends Controller
                 }
             }
         }
+
+        if ($comprobante == 'boleta') {
+            $TipoDoctoVta = 'B';
+        }
+        if ($comprobante == 'factura') {
+            $TipoDoctoVta = 'F';
+        }
+
+        $address_1 = '';
+        $address_2 = '';
+        if ($orderData['shipping'] && $orderData['shipping']['address_1']) {
+            $address_1 = $orderData['shipping']['address_1'];
+            if ($orderData['shipping']['address_2']) {
+                $address_2 = $orderData['shipping']['address_2'];
+            }
+        }        
+        $cliente = [
+            'rut' => $RutCliente,
+            'nombre' => $NomCon,
+            'email' => $CorreoCliente,
+            'direccion' => $address_1,
+            'direccion2' => $address_2,
+            'telefono' => $phone
+        ];
+        $this->postConsultarCliente($cliente);
+
         $nvNetoExento = 0;
         $totalNet = $orderData['total'];
         $totalWTax = round($totalNet*1.19);
@@ -362,7 +491,7 @@ class SoftlandController extends Controller
                     <!--Optional:-->
                     <sof:CorreoCliente>'.$CorreoCliente.'</sof:CorreoCliente>
                     <!--Optional:-->
-                    <sof:TipoDoctoVta>B</sof:TipoDoctoVta>
+                    <sof:TipoDoctoVta>'.$TipoDoctoVta.'</sof:TipoDoctoVta>
                     <!--Optional:-->
                     <sof:impuestos>
                        <!--Zero or more repetitions:-->
