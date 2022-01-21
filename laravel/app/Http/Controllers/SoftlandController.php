@@ -288,11 +288,11 @@ class SoftlandController extends Controller
         $response = json_encode($response);
         $response = json_decode($response, true);
 
-        
+        // dd($cliente, $response);
         if ($c = $response['soapBody']['ObtieneAuxiliaresxCodigoResponse']['ObtieneAuxiliaresxCodigoResult']) {
 
         } else {
-            //$this->insertarCliente($cliente);
+            $this->insertarCliente($cliente);
         }
         
     }
@@ -309,7 +309,7 @@ class SoftlandController extends Controller
 
         $response = json_encode($response);
         $response = json_decode($response, true);
-        dd($dataRaw, $response);
+        // dd($dataRaw, $response);
         $ventaResult = $response['soapBody']['IngresaNotadeVentaResponse']['IngresaNotadeVentaResult'];
         $formatUpdateWcOrder = $this->formatUpdateWcOrder($ventaResult);
         $update = $this->updateWcOrder($input['order_data']['id'], $formatUpdateWcOrder);
@@ -465,12 +465,12 @@ class SoftlandController extends Controller
                     <sof:TotalBoleta>'.$totalWTax.'</sof:TotalBoleta>
                     <sof:NumReq>0</sof:NumReq>
                     <sof:EnMantencion>0</sof:EnMantencion>
-                    <sof:nvFeAprob>0001-01-01</sof:nvFeAprob>
+                    <sof:nvFeAprob>'.$date.'</sof:nvFeAprob>
                     <sof:nvMonto>'.$totalWTax.'</sof:nvMonto>
                     <sof:nvSubTotal>'.$totalWTax.'</sof:nvSubTotal>
                     <!--Optional:-->
                     <sof:RutCliente>'.$RutCliente.'</sof:RutCliente>
-                    <sof:nvFem>0001-01-01</sof:nvFem>
+                    <sof:nvFem>'.$date.'</sof:nvFem>
                     <!--Optional:-->
                     <sof:nvEstado>A</sof:nvEstado>
                     <sof:nvEstFact>0</sof:nvEstFact>
@@ -481,7 +481,7 @@ class SoftlandController extends Controller
                     <sof:NumOC>-1</sof:NumOC>
                     <sof:nvFeEnt>'.$date.'</sof:nvFeEnt>
                     <!--Optional:-->
-                    <sof:CodAux></sof:CodAux>
+                    <sof:CodAux>'.str_replace(['.', '-'], ['', ''], $RutCliente).'</sof:CodAux>
                     <!--Optional:-->
                     <sof:VenCod>01</sof:VenCod>
                     <!--Optional:-->
