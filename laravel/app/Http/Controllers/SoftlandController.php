@@ -227,7 +227,7 @@ class SoftlandController extends Controller
         <PaiAux>CL</PaiAux>
         <DirAux>'.$cliente['direccion'].'</DirAux>
         <DirNum>'.$cliente['direccion2'].'</DirNum>
-        <FonAux1>'.$cliente['phone'].'</FonAux1>
+        <FonAux1>'.$cliente['telefono'].'</FonAux1>
         <FonAux2></FonAux2>
         <FonAux3></FonAux3>
         <FaxAux1></FaxAux1>
