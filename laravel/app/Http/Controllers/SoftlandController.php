@@ -303,6 +303,7 @@ class SoftlandController extends Controller
 
         $url = 'https://web.softlandcloud.cl/ecommerce/WSNotaVenta.asmx?WSDL';
         $dataRaw = $this->generateNVXml($input);
+        dd($dataRaw);
         $response = postSoapCurlRequest($url, null, $dataRaw);
         $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
         $response = new \SimpleXMLElement($response);
@@ -483,7 +484,7 @@ class SoftlandController extends Controller
                     <!--Optional:-->
                     <sof:CodAux>'.str_replace(['.', '-'], ['', ''], $RutCliente).'</sof:CodAux>
                     <!--Optional:-->
-                    <sof:VenCod>01</sof:VenCod>
+                    <sof:VenCod>17</sof:VenCod>
                     <!--Optional:-->
                     <sof:CveCod>01</sof:CveCod>
                     <!--Optional:-->
