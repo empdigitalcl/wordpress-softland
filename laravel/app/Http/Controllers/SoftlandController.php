@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Sync;
 use Illuminate\Http\Request;
 use Woocommerce;
+use Log;
 date_default_timezone_set('America/Santiago');
 
 class SoftlandController extends Controller
@@ -303,7 +304,8 @@ class SoftlandController extends Controller
 
         $url = 'https://web.softlandcloud.cl/ecommerce/WSNotaVenta.asmx?WSDL';
         $dataRaw = $this->generateNVXml($input);
-        dd($dataRaw);
+        Log::info($dataRaw);
+        // dd($dataRaw);
         $response = postSoapCurlRequest($url, null, $dataRaw);
         $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
         $response = new \SimpleXMLElement($response);
@@ -314,7 +316,7 @@ class SoftlandController extends Controller
         $ventaResult = $response['soapBody']['IngresaNotadeVentaResponse']['IngresaNotadeVentaResult'];
         $formatUpdateWcOrder = $this->formatUpdateWcOrder($ventaResult);
         $update = $this->updateWcOrder($input['order_data']['id'], $formatUpdateWcOrder);
-        return $update;
+        return $formatUpdateWcOrder;
         
     }
     private function generateNVXml($data) {
@@ -542,6 +544,7 @@ class SoftlandController extends Controller
                 ],
             ],
         ];
+        Log::info('Nota de venta creada en softland '.$ventaResult);
         return $data;
     }
 
@@ -582,7 +585,7 @@ class SoftlandController extends Controller
                 $sync->save();
             }
         }
-        dd($products);
+        //dd($products);
     }
 
     public function order(Request $request)
@@ -673,7 +676,7 @@ class SoftlandController extends Controller
         $response = postSoapCurlRequest($url, null, $dataRaw);
         $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
         $xml = new \SimpleXMLElement($response);
-        dd($xml);
+        //dd($xml);
         if ($xml->soapBody && $xml->soapBody->ObtenerStockPorBodegaResponse && $xml->soapBody->ObtenerStockPorBodegaResponse->ObtenerStockPorBodegaResult && $xml->soapBody->ObtenerStockPorBodegaResponse->ObtenerStockPorBodegaResult->stock) {
             $results = $xml->soapBody->ObtenerStockPorBodegaResponse->ObtenerStockPorBodegaResult;
             $products = [];
@@ -709,7 +712,7 @@ class SoftlandController extends Controller
         $response = postSoapCurlRequest($url, null, $dataRaw);
         $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
         $xml = new \SimpleXMLElement($response);
-        dd($xml);
+        //dd($xml);
         if ($xml->soapBody && $xml->soapBody->ObtenerCatalogoProductosResponse && $xml->soapBody->ObtenerCatalogoProductosResponse->ObtenerCatalogoProductosResult && $xml->soapBody->ObtenerCatalogoProductosResponse->ObtenerCatalogoProductosResult->productoUni) {
             $results = $xml->soapBody->ObtenerCatalogoProductosResponse->ObtenerCatalogoProductosResult;
             $products = [];
@@ -796,7 +799,7 @@ class SoftlandController extends Controller
             // return json_encode($products);
             // return response()->json($products, 200);
         } else {
-            dd($xml);
+            dd('799', $xml);
         }
     }
 }
