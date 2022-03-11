@@ -301,11 +301,11 @@ class SoftlandController extends Controller
     {
         
         $input = $request->all();
-
+        Log::info('Payload');
+        Log::info(json_encode($input));
         $url = 'https://web.softlandcloud.cl/ecommerce/WSNotaVenta.asmx?WSDL';
         $dataRaw = $this->generateNVXml($input);
         Log::info($dataRaw);
-        dd($dataRaw);
         $response = postSoapCurlRequest($url, null, $dataRaw);
         $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
         $response = new \SimpleXMLElement($response);
