@@ -305,7 +305,7 @@ class SoftlandController extends Controller
         $url = 'https://web.softlandcloud.cl/ecommerce/WSNotaVenta.asmx?WSDL';
         $dataRaw = $this->generateNVXml($input);
         Log::info($dataRaw);
-        // dd($dataRaw);
+        dd($dataRaw);
         $response = postSoapCurlRequest($url, null, $dataRaw);
         $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
         $response = new \SimpleXMLElement($response);
@@ -374,17 +374,16 @@ class SoftlandController extends Controller
         $this->postConsultarCliente($cliente);
 
         $nvNetoExento = 0;
-        $totalNet = $orderData['total'];
-        $totalWTax = round($totalNet*1.19);
-        $totalTax = round($totalNet*0.19);
+        
+        $totalWTax = $orderData['total']; //round($totalNet*0.19);
+        $totalNet = round($totalWTax/1,19);
         $nvTotalDesc = 0;
 
         $NotaVentaDetalleDTO = '';
         $k = 1;
         if (count($data['order_items']) > 0) {
             foreach ($data['order_items'] as $orderItems) {
-                $itemTotalNet = $orderItems['total'];
-                $itemTotalWTax = round($orderItems['total']*1.19);
+                $itemTotalWTax = $orderItems['total'];
                 $itemTotalTax = round($orderItems['total']*0.19);
                 $NotaVentaDetalleDTO.='<sof:NotaVentaDetalleDTO>
                 <sof:CantUVta>'.$orderItems['quantity'].'</sof:CantUVta>
@@ -395,17 +394,17 @@ class SoftlandController extends Controller
                 <!--Optional:-->
                 <sof:DetProd>'.$orderItems['name'].'</sof:DetProd>
                 <sof:nvCantOC>0</sof:nvCantOC>
-                <sof:nvCantBoleta>'.$itemTotalTax.'</sof:nvCantBoleta>
+                <sof:nvCantBoleta>'.$itemTotalWTax.'</sof:nvCantBoleta>
                 <sof:nvCantNC>0</sof:nvCantNC>
                 <sof:nvCantDevuelto>0</sof:nvCantDevuelto>
                 <sof:nvCantFact>0</sof:nvCantFact>
                 <!--Optional:-->
                 <sof:Partida>0</sof:Partida>
                 <sof:nvCantProd>1</sof:nvCantProd>
-                <sof:nvTotLinea>'.$itemTotalTax.'</sof:nvTotLinea>
-                <sof:nvSubTotal>'.$itemTotalTax.'</sof:nvSubTotal>
+                <sof:nvTotLinea>'.$itemTotalWTax.'</sof:nvTotLinea>
+                <sof:nvSubTotal>'.$itemTotalWTax.'</sof:nvSubTotal>
                 <sof:nvEquiv>1</sof:nvEquiv>
-                <sof:nvPrecio>'.$itemTotalTax.'</sof:nvPrecio>
+                <sof:nvPrecio>'.$itemTotalWTax.'</sof:nvPrecio>
                 <sof:nvCant>1</sof:nvCant>
                 <!--Optional:-->
                 <sof:CodProd>'.$orderItems['sku'].'</sof:CodProd>
@@ -430,6 +429,52 @@ class SoftlandController extends Controller
              $k++;
             }
         }
+        //AGREGA UNA LINEA CON EL DETALLE DEL DESPACHO
+        /* if (isset($data['order_data']['shipping_total']) && $data['order_data']['shipping_total'] > 0) {
+            $shippingTotal = $data['order_data']['shipping_total'];
+            $shippingSku = 'XXX';
+                $NotaVentaDetalleDTO.='<sof:NotaVentaDetalleDTO>
+                <sof:CantUVta>1</sof:CantUVta>
+                <!--Optional:-->
+                <sof:CodUMed>C.U.</sof:CodUMed>
+                <!--Optional:-->
+                <sof:CheckeoMovporAlarmaVtas>N</sof:CheckeoMovporAlarmaVtas>
+                <!--Optional:-->
+                <sof:DetProd>Despacho</sof:DetProd>
+                <sof:nvCantOC>0</sof:nvCantOC>
+                <sof:nvCantBoleta>'.$shippingTotal.'</sof:nvCantBoleta>
+                <sof:nvCantNC>0</sof:nvCantNC>
+                <sof:nvCantDevuelto>0</sof:nvCantDevuelto>
+                <sof:nvCantFact>0</sof:nvCantFact>
+                <!--Optional:-->
+                <sof:Partida>0</sof:Partida>
+                <sof:nvCantProd>1</sof:nvCantProd>
+                <sof:nvTotLinea>'.$shippingTotal.'</sof:nvTotLinea>
+                <sof:nvSubTotal>'.$shippingTotal.'</sof:nvSubTotal>
+                <sof:nvEquiv>1</sof:nvEquiv>
+                <sof:nvPrecio>'.$shippingTotal.'</sof:nvPrecio>
+                <sof:nvCant>1</sof:nvCant>
+                <!--Optional:-->
+                <sof:CodProd>'.$shippingSku.'</sof:CodProd>
+                <sof:nvFecCompr>'.$date.'</sof:nvFecCompr>
+                <sof:nvCorrela>'.$k.'</sof:nvCorrela>
+                <sof:nvLinea>'.$k.'</sof:nvLinea>
+                <sof:nvCantDesp>0</sof:nvCantDesp>
+                <!--Optional:-->
+                <sof:Pieza>0</sof:Pieza>
+                <sof:nvDPorcDesc01>0</sof:nvDPorcDesc01>
+                <sof:nvDPorcDesc02>0</sof:nvDPorcDesc02>
+                <sof:nvDPorcDesc03>0</sof:nvDPorcDesc03>
+                <sof:nvDPorcDesc04>0</sof:nvDPorcDesc04>
+                <sof:nvDPorcDesc05>0</sof:nvDPorcDesc05>
+                <sof:nvDDescto01>0</sof:nvDDescto01>
+                <sof:nvDDescto02>0</sof:nvDDescto02>
+                <sof:nvDDescto03>0</sof:nvDDescto03>
+                <sof:nvDDescto04>0</sof:nvDDescto04>
+                <sof:nvDDescto05>0</sof:nvDDescto05>
+                <sof:nvTotDesc>0</sof:nvTotDesc>
+             </sof:NotaVentaDetalleDTO>';
+        } */
         return '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:sof="http://softland.cl/">
         <soap:Header>
            <sof:AuthHeader>
@@ -503,7 +548,7 @@ class SoftlandController extends Controller
                           <sof:CodImpto>IVA</sof:CodImpto>
                           <sof:ValorPorcentualImpuesto>19</sof:ValorPorcentualImpuesto>
                           <sof:AfectoAImpuesto>'.$totalNet.'</sof:AfectoAImpuesto>
-                          <sof:MontoImpuesto>'.$totalTax.'</sof:MontoImpuesto>
+                          <sof:MontoImpuesto>'.($totalWTax-$totalNet).'</sof:MontoImpuesto>
                        </sof:ImpuestoNV>
                     </sof:impuestos>
                     <sof:nvPorcDesc01>0</sof:nvPorcDesc01>
