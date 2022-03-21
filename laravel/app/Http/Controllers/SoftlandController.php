@@ -324,6 +324,7 @@ class SoftlandController extends Controller
         $orderData = $data['order_data'];
         $NomCon = $orderData['billing']['first_name'].' '.$orderData['billing']['last_name'];
         $CorreoCliente = $orderData['billing']['email'];
+        $nvObser = 'Pedido WC ' . $orderData['id'];
         $RutCliente = '';
         $TipoDoctoVta = '';
         $comprobante = '';
@@ -500,7 +501,7 @@ class SoftlandController extends Controller
                     <sof:nvNetoExento>'.$nvNetoExento.'</sof:nvNetoExento>
                     <sof:nvNetoAfecto>'.$totalNet.'</sof:nvNetoAfecto>
                     <sof:nvTotalDesc>'.$nvTotalDesc.'</sof:nvTotalDesc>
-                    <sof:nvObser>.</sof:nvObser>
+                    <sof:nvObser>'.$nvObser.'</sof:nvObser>
                     <!--Optional:-->
                     <sof:ConcAuto>N</sof:ConcAuto>
                     <sof:NumGuiaRes>0</sof:NumGuiaRes>
