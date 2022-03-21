@@ -399,7 +399,7 @@ class SoftlandController extends Controller
                 <sof:nvCantDevuelto>0</sof:nvCantDevuelto>
                 <sof:nvCantFact>0</sof:nvCantFact>
                 <!--Optional:-->
-                <sof:Partida>0</sof:Partida>
+                <sof:Partida></sof:Partida>
                 <sof:nvCantProd>1</sof:nvCantProd>
                 <sof:nvTotLinea>'.$itemTotalWTax.'</sof:nvTotLinea>
                 <sof:nvSubTotal>'.$itemTotalWTax.'</sof:nvSubTotal>
@@ -413,7 +413,7 @@ class SoftlandController extends Controller
                 <sof:nvLinea>'.$k.'</sof:nvLinea>
                 <sof:nvCantDesp>0</sof:nvCantDesp>
                 <!--Optional:-->
-                <sof:Pieza>0</sof:Pieza>
+                <sof:Pieza></sof:Pieza>
                 <sof:nvDPorcDesc01>0</sof:nvDPorcDesc01>
                 <sof:nvDPorcDesc02>0</sof:nvDPorcDesc02>
                 <sof:nvDPorcDesc03>0</sof:nvDPorcDesc03>
@@ -500,6 +500,7 @@ class SoftlandController extends Controller
                     <sof:nvNetoExento>'.$nvNetoExento.'</sof:nvNetoExento>
                     <sof:nvNetoAfecto>'.$totalNet.'</sof:nvNetoAfecto>
                     <sof:nvTotalDesc>'.$nvTotalDesc.'</sof:nvTotalDesc>
+                    <sof:nvObser>.</sof:nvObser>
                     <!--Optional:-->
                     <sof:ConcAuto>N</sof:ConcAuto>
                     <sof:NumGuiaRes>0</sof:NumGuiaRes>
